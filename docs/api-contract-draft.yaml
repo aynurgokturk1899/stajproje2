@@ -1,0 +1,395 @@
+openapi: 3.0.3
+info:
+  title: Team Task Manager API
+  version: 0.1.0-draft
+  description: 3. gün API sözleşmesi taslağı. Uygulama sırasında Swagger ile doğrulanacaktır.
+servers:
+  - url: https://localhost:7001/api
+    description: Yerel geliştirme
+security:
+  - bearerAuth: []
+tags:
+  - { name: Auth }
+  - { name: Users }
+  - { name: Projects }
+  - { name: Tasks }
+  - { name: Comments }
+  - { name: Attachments }
+  - { name: Notifications }
+  - { name: Dashboard }
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Kullanıcı girişi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200': { description: Başarılı, content: { application/json: { schema: { $ref: '#/components/schemas/LoginResponseEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Oturumdaki kullanıcı
+      responses:
+        '200': { description: Başarılı, content: { application/json: { schema: { $ref: '#/components/schemas/UserEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/change-password:
+    post:
+      tags: [Auth]
+      summary: Parola değiştir
+      responses:
+        '204': { description: Güncellendi }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /users:
+    get:
+      tags: [Users]
+      summary: Kullanıcıları filtreli ve sayfalı listele
+      parameters:
+        - { $ref: '#/components/parameters/PageNumber' }
+        - { $ref: '#/components/parameters/PageSize' }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: isActive, in: query, schema: { type: boolean } }
+      responses:
+        '200': { description: Başarılı, content: { application/json: { schema: { $ref: '#/components/schemas/UserPageEnvelope' } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Users]
+      summary: Yeni kullanıcı oluştur
+      responses:
+        '201': { description: Oluşturuldu }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Kullanıcı detayı
+      parameters: [{ $ref: '#/components/parameters/StringId' }]
+      responses:
+        '200': { description: Başarılı }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Users]
+      summary: Kullanıcı bilgilerini güncelle
+      parameters: [{ $ref: '#/components/parameters/StringId' }]
+      responses:
+        '204': { description: Güncellendi }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /users/{id}/status:
+    patch:
+      tags: [Users]
+      summary: Kullanıcı aktif/pasif durumunu değiştir
+      parameters: [{ $ref: '#/components/parameters/StringId' }]
+      responses:
+        '204': { description: Güncellendi }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Yetkili olunan projeleri listele
+      parameters:
+        - { $ref: '#/components/parameters/PageNumber' }
+        - { $ref: '#/components/parameters/PageSize' }
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/ProjectStatus' } }
+        - { name: search, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Başarılı }
+    post:
+      tags: [Projects]
+      summary: Proje oluştur
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ProjectCreateRequest' } } }
+      responses:
+        '201': { description: Oluşturuldu }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /projects/{id}:
+    get:
+      tags: [Projects]
+      summary: Proje detayı
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses:
+        '200': { description: Başarılı }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Projects]
+      summary: Projeyi güncelle
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses:
+        '204': { description: Güncellendi }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /projects/{id}/status:
+    patch:
+      tags: [Projects]
+      summary: Proje durumunu değiştir
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses:
+        '204': { description: Güncellendi }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /projects/{id}/members:
+    get:
+      tags: [Projects]
+      summary: Proje üyelerini listele
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '200': { description: Başarılı } }
+    post:
+      tags: [Projects]
+      summary: Projeye üye ekle
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses:
+        '201': { description: Eklendi }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /projects/{id}/members/{userId}:
+    delete:
+      tags: [Projects]
+      summary: Projeden üye çıkar
+      parameters:
+        - { $ref: '#/components/parameters/IntId' }
+        - { $ref: '#/components/parameters/UserId' }
+      responses:
+        '204': { description: Çıkarıldı }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /tasks:
+    get:
+      tags: [Tasks]
+      summary: Görevleri filtreli, sıralı ve sayfalı listele
+      parameters:
+        - { $ref: '#/components/parameters/PageNumber' }
+        - { $ref: '#/components/parameters/PageSize' }
+        - { name: projectId, in: query, schema: { type: integer } }
+        - { name: assignedUserId, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/TaskStatus' } }
+        - { name: priority, in: query, schema: { $ref: '#/components/schemas/TaskPriority' } }
+        - { name: dueFrom, in: query, schema: { type: string, format: date } }
+        - { name: dueTo, in: query, schema: { type: string, format: date } }
+        - { name: sort, in: query, schema: { type: string, example: dueDate:asc } }
+      responses: { '200': { description: Başarılı } }
+    post:
+      tags: [Tasks]
+      summary: Görev oluştur
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TaskCreateRequest' } } }
+      responses:
+        '201': { description: Oluşturuldu }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /tasks/my:
+    get:
+      tags: [Tasks]
+      summary: Oturumdaki kullanıcının görevleri
+      responses: { '200': { description: Başarılı } }
+  /tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: Görev detayı
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses:
+        '200': { description: Başarılı }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Tasks]
+      summary: Görevi güncelle
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Güncellendi } }
+    delete:
+      tags: [Tasks]
+      summary: Görevi arşivle
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Arşivlendi } }
+  /tasks/{id}/status:
+    patch:
+      tags: [Tasks]
+      summary: Görev durumunu değiştir
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TaskStatusUpdateRequest' } } }
+      responses:
+        '204': { description: Güncellendi }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /tasks/{taskId}/comments:
+    get:
+      tags: [Comments]
+      summary: Görev yorumları
+      parameters: [{ $ref: '#/components/parameters/TaskId' }]
+      responses: { '200': { description: Başarılı } }
+    post:
+      tags: [Comments]
+      summary: Yorum ekle
+      parameters: [{ $ref: '#/components/parameters/TaskId' }]
+      responses: { '201': { description: Eklendi } }
+  /comments/{id}:
+    put:
+      tags: [Comments]
+      summary: Kendi yorumunu güncelle
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Güncellendi } }
+    delete:
+      tags: [Comments]
+      summary: Yorumu sil
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Silindi } }
+  /tasks/{taskId}/attachments:
+    post:
+      tags: [Attachments]
+      summary: Göreve dosya yükle
+      parameters: [{ $ref: '#/components/parameters/TaskId' }]
+      requestBody:
+        required: true
+        content: { multipart/form-data: { schema: { type: object, required: [file], properties: { file: { type: string, format: binary } } } } }
+      responses:
+        '201': { description: Yüklendi }
+        '413': { description: Dosya çok büyük }
+  /attachments/{id}/download:
+    get:
+      tags: [Attachments]
+      summary: Dosya indir
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '200': { description: Dosya içeriği } }
+  /attachments/{id}:
+    delete:
+      tags: [Attachments]
+      summary: Dosyayı sil
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Silindi } }
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Kullanıcının bildirimleri
+      responses: { '200': { description: Başarılı } }
+  /notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      summary: Bildirimi okundu yap
+      parameters: [{ $ref: '#/components/parameters/IntId' }]
+      responses: { '204': { description: Güncellendi } }
+  /notifications/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Tüm bildirimleri okundu yap
+      responses: { '204': { description: Güncellendi } }
+  /dashboard/summary:
+    get:
+      tags: [Dashboard]
+      summary: Rol bazlı dashboard özeti
+      responses: { '200': { description: Başarılı } }
+  /reports/project-progress:
+    get:
+      tags: [Dashboard]
+      summary: Proje ilerleme raporu
+      responses: { '200': { description: Başarılı } }
+  /reports/workload:
+    get:
+      tags: [Dashboard]
+      summary: Kullanıcı iş yükü raporu
+      responses: { '200': { description: Başarılı } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IntId: { name: id, in: path, required: true, schema: { type: integer, format: int32 } }
+    TaskId: { name: taskId, in: path, required: true, schema: { type: integer, format: int32 } }
+    StringId: { name: id, in: path, required: true, schema: { type: string } }
+    UserId: { name: userId, in: path, required: true, schema: { type: string } }
+    PageNumber: { name: pageNumber, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+    PageSize: { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+  responses:
+    BadRequest: { description: Geçersiz istek, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } } }
+    Unauthorized: { description: Kimlik doğrulama gerekli }
+    Forbidden: { description: Yetki yok }
+    NotFound: { description: Kayıt bulunamadı }
+    Conflict: { description: İş kuralı ihlali }
+  schemas:
+    ApiEnvelope:
+      type: object
+      required: [success, message, errors]
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        data: { nullable: true }
+        errors: { type: array, items: { type: string } }
+    ErrorEnvelope:
+      allOf:
+        - { $ref: '#/components/schemas/ApiEnvelope' }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 8 }
+    LoginResponse:
+      type: object
+      required: [accessToken, expiresAt, user]
+      properties:
+        accessToken: { type: string }
+        expiresAt: { type: string, format: date-time }
+        user: { $ref: '#/components/schemas/UserSummary' }
+    LoginResponseEnvelope:
+      allOf:
+        - { $ref: '#/components/schemas/ApiEnvelope' }
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/LoginResponse' } }
+    UserSummary:
+      type: object
+      properties:
+        id: { type: string }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, format: email }
+        roles: { type: array, items: { type: string } }
+        isActive: { type: boolean }
+    UserEnvelope:
+      allOf:
+        - { $ref: '#/components/schemas/ApiEnvelope' }
+        - type: object
+          properties: { data: { $ref: '#/components/schemas/UserSummary' } }
+    UserPageEnvelope:
+      allOf:
+        - { $ref: '#/components/schemas/ApiEnvelope' }
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                items: { type: array, items: { $ref: '#/components/schemas/UserSummary' } }
+                pageNumber: { type: integer }
+                pageSize: { type: integer }
+                totalCount: { type: integer }
+                totalPages: { type: integer }
+    ProjectCreateRequest:
+      type: object
+      required: [name, startDate, targetEndDate]
+      properties:
+        name: { type: string, minLength: 3, maxLength: 150 }
+        description: { type: string, maxLength: 1000, nullable: true }
+        startDate: { type: string, format: date }
+        targetEndDate: { type: string, format: date }
+    TaskCreateRequest:
+      type: object
+      required: [projectId, title, assignedUserId, priority, dueDate]
+      properties:
+        projectId: { type: integer }
+        title: { type: string, minLength: 3, maxLength: 200 }
+        description: { type: string, nullable: true }
+        assignedUserId: { type: string }
+        priority: { $ref: '#/components/schemas/TaskPriority' }
+        startDate: { type: string, format: date, nullable: true }
+        dueDate: { type: string, format: date }
+    TaskStatusUpdateRequest:
+      type: object
+      required: [status]
+      properties: { status: { $ref: '#/components/schemas/TaskStatus' } }
+    ProjectStatus: { type: string, enum: [Planned, Active, Completed, Cancelled] }
+    TaskStatus: { type: string, enum: [New, InProgress, OnHold, Completed, Cancelled] }
+    TaskPriority: { type: string, enum: [Low, Medium, High, Critical] }

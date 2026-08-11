@@ -1,0 +1,30 @@
+name: Özellik
+description: Yeni ürün veya teknik özellik
+title: "[Feature]: "
+labels: ["type: feature", "status: backlog"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: Kullanıcı hikâyesi
+      placeholder: Bir ... olarak ... istiyorum, böylece ...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Kabul kriterleri
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Alan
+      options: [Backend, Web, Mobile, Database, Test, Documentation]
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Teknik notlar
