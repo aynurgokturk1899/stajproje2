@@ -1,0 +1,4 @@
+.name-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.switch-text { margin: 22px 0 0; text-align: center; color: #71809a; font-size: 14px; }
+.switch-text button { padding: 0; background: transparent; color: #2563eb; }
+.success-message { padding: 11px 13px; border-radius: 9px; background: #e8f8ee; color: #177548; font-size: 14px; }

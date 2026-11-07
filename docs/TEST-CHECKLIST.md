@@ -1,0 +1,22 @@
+# Kabul ve test kontrol listesi
+
+- [ ] Doğru admin bilgileri 200 ve JWT döndürüyor; hatalı parola anlaşılır 401 üretiyor.
+- [ ] Ekip üyesi admin endpointinde 403 alıyor.
+- [ ] Ekip üyesi kendisine ait olmayan mevcut proje ve görev detayında 403 alıyor.
+- [ ] Yönetici proje oluşturuyor; bitiş < başlangıç reddediliyor.
+- [ ] Aktif kullanıcı projeye ekleniyor; aynı aktif üyelik tekrar eklenemiyor.
+- [ ] Görev yalnız aktif proje üyesine atanıyor.
+- [ ] Görev listeleme; durum/öncelik/tarih filtresi, sıralama ve sayfalama çalışıyor.
+- [ ] İzinli durum geçişi kabul, doğrudan Yeni → Tamamlandı geçişi ret ediliyor.
+- [ ] Tamamlanan görevde `CompletedDate` oluşuyor.
+- [ ] Yorum ekleme ve 1–1500 karakter doğrulaması çalışıyor.
+- [ ] İzinli dosya yükleniyor; 5 MB üzeri veya yasak uzantı reddediliyor.
+- [ ] Atamada bildirim oluşuyor; tekil/tümünü okundu yapma çalışıyor.
+- [ ] Dashboard sayıları veritabanı kayıtlarıyla eşleşiyor.
+- [ ] Web boş liste ve API hata durumunu kullanıcıya gösteriyor.
+- [ ] Mobil boş liste, yenileme ve bağlantı hatasını kullanıcıya gösteriyor.
+- [x] `dotnet test TeamTaskManager.sln` 16 testi geçiriyor.
+- [x] React görev ekranında durum/öncelik filtreleri, sayfalama ve sıralama production build içinde bulunuyor.
+- [x] React yönetim panelinde kullanıcı oluşturma ve proje ekranında doğrudan üye yönetimi bulunuyor.
+- [x] Mobil Android bundle; görev listesi, durum, yorum, bildirim ve izinli dosya yükleme akışıyla üretiliyor.
+- [ ] Swagger ve Postman ile demo akışı baştan sona tamamlanıyor.

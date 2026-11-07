@@ -1,0 +1,22 @@
+.account-grid { display: grid; grid-template-columns: minmax(230px, .8fr) minmax(360px, 1.2fr); gap: 24px; }
+.account-summary { display: grid; align-content: start; justify-items: center; text-align: center; padding: 34px; }
+.account-summary h2 { margin-top: 16px; font-size: 20px; }
+.account-summary p { color: #71809a; margin: 7px 0 18px; }
+.avatar { display: grid; place-items: center; width: 74px; height: 74px; border-radius: 22px; background: linear-gradient(135deg, #2563eb, #72a0fb); color: #fff; font: 800 25px Manrope, sans-serif; }
+.role-tag { padding: 7px 11px; border-radius: 999px; background: #edf3ff; color: #2563eb; font-size: 13px; font-weight: 700; }
+.password-panel { padding: 30px; }
+.password-panel h2 { font-size: 20px; }
+.password-panel .muted { margin: 8px 0 0; }
+.account-page { display: grid; gap: 24px; }
+.account-summary small { margin-top: 18px; color: #8792a8; }
+.profile-edit { padding: 30px; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.profile-stats article { display: grid; gap: 5px; padding: 22px; border: 1px solid #eadde3; border-radius: 16px; background: #fff; }
+.profile-stats b { font-size: 30px; color: #9d476b; }
+.profile-stats span, .activity span { color: #71809a; font-size: 13px; }
+.lower { align-items: start; }
+.activities { padding: 30px; }
+.activity { display: grid; gap: 4px; padding: 14px 0; border-bottom: 1px solid #edf0f5; }
+.activity .activity-entity { width: fit-content; margin: 3px 0; padding: 5px 8px; border-radius: 7px; background: #f7edf1; color: #8d3f61; font-weight: 700; }
+@media (max-width: 750px) { .account-grid { grid-template-columns: 1fr; } }
+@media (max-width: 750px) { .profile-stats { grid-template-columns: repeat(2, 1fr); } }

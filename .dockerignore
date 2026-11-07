@@ -1,0 +1,15 @@
+.git/
+.github/
+.idea/
+.vs/
+**/bin/
+**/obj/
+**/TestResults/
+uploads/
+.env
+*.user
+*.suo
+README.md
+docs/
+src/frontend/node_modules/
+src/frontend/dist/

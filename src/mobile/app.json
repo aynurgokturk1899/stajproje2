@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Ekip Görev Yönetimi",
+    "slug": "team-task-manager",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "plugins": ["expo-secure-store"],
+    "android": { "package": "com.bera.teamtaskmanager" },
+    "ios": { "bundleIdentifier": "com.bera.teamtaskmanager" }
+  }
+}

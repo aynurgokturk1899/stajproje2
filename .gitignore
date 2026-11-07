@@ -26,6 +26,7 @@ secrets.json
 uploads/
 TestResults/
 coverage/
+.artifacts/
 .chrome-pdf-profile*/
 docs/qa-*/
 
